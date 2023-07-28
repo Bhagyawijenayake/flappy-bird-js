@@ -71,6 +71,8 @@ function update(time, delta) {
   if (bird.y > config.height || bird.y < 0 - bird.height) {
     restartBirdPosition();
   }
+
+  recyclePipes();
 }
 
 function placePipe(uPipe, lPipe) {
@@ -91,6 +93,21 @@ function placePipe(uPipe, lPipe) {
 
   lPipe.x = uPipe.x;
   lPipe.y = uPipe.y + pipeVerticalDistance;
+}
+
+function recyclePipes() {
+  const tempPipes = [];
+pipes.getChildren().forEach(pipe => {
+  if(pipe.getBounds().right <= 0) {
+    tempPipes.push(pipe);
+    if(tempPipes.length === 2) {
+      placePipe(...tempPipes);
+      //tempPipes.length = 0;
+
+    }
+
+  }
+})
 }
 
 function getRightmostPipe() {
