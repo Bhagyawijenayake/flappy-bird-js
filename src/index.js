@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import PlayScene from "./scenes/PlayScene";
 
 const config = {
   //webGL
@@ -12,11 +13,7 @@ const config = {
       debug: true,
     },
   },
-  scene: {
-    preload,
-    create,
-    update,
-  },
+  scene: [PlayScene],
 };
 
 const VELOCITY = 200;
