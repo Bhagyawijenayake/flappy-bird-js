@@ -19,7 +19,6 @@ class PlayScene extends BaseScene {
     this.bestScore = 0;
     this.bestScoreText = "";
 
-
     this.currentDifficulty = "easy";
     this.difficulties = {
       easy: {
@@ -32,13 +31,13 @@ class PlayScene extends BaseScene {
       },
       hard: {
         pipeHorizontalDistanceRange: [250, 310],
-        pipeVerticalDistanceRange: [120, 150],
+        pipeVerticalDistanceRange: [50, 100],
       },
     };
   }
 
   create() {
-    this.currentDifficulty = "hard";
+    this.currentDifficulty = "easy";
     super.create();
     this.createBird();
     this.createPipes();
@@ -56,10 +55,11 @@ class PlayScene extends BaseScene {
   }
 
   listenToEvents() {
+    if (this.pauseEvent) {
+      return;
+    }
 
-    if (this.pauseEvent) { return; }
-
-    this.pauseEvent=this.events.on("resume", () => {
+    this.pauseEvent = this.events.on("resume", () => {
       this.initialTime = 3;
       this.countDownText = this.add
         .text(
@@ -70,7 +70,7 @@ class PlayScene extends BaseScene {
         .setOrigin(0.5);
       this.timedEvent = this.time.addEvent({
         delay: 1000,
-        callback: () =>this.countDown(),
+        callback: () => this.countDown(),
         callbackScope: this,
         loop: true,
       });
@@ -151,7 +151,7 @@ class PlayScene extends BaseScene {
       .setOrigin(1, 1);
 
     pauseButton.on("pointerdown", () => {
-      this.isPaused=true;
+      this.isPaused = true;
       this.physics.pause();
       this.scene.pause();
       this.scene.launch("PauseScene");
@@ -174,11 +174,8 @@ class PlayScene extends BaseScene {
   }
 
   placePipe(uPipe, lPipe) {
-
     const difficulty = this.difficulties[this.currentDifficulty];
 
-
-    
     const rightMostX = this.getRightmostPipe();
     const pipeVerticalDistance = Phaser.Math.Between(
       ...difficulty.pipeVerticalDistanceRange
@@ -207,9 +204,20 @@ class PlayScene extends BaseScene {
           this.placePipe(...tempPipes);
           this.increaseScore();
           this.saveBestScore();
+          this.increaseDifficulty();
         }
       }
     });
+  }
+
+  increaseDifficulty() {
+    if (this.score === 1) {
+      this.currentDifficulty = "normal";
+    }
+
+    if (this.score === 3) {
+      this.currentDifficulty = "hard";
+    }
   }
 
   getRightmostPipe() {
@@ -247,7 +255,7 @@ class PlayScene extends BaseScene {
   }
 
   flap() {
-    if(this.isPaused) return;
+    if (this.isPaused) return;
     this.bird.body.velocity.y = -this.flapVelocity;
   }
 
