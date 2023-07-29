@@ -16,6 +16,8 @@ class PlayScene extends BaseScene {
     this.score = 0;
     this.scoreText = "";
 
+    this.restartText = null;
+
     this.currentDifficulty = "easy";
     this.difficulties = {
       easy: {
@@ -56,11 +58,30 @@ class PlayScene extends BaseScene {
     });
 
     this.bird.play("fly");
+
+    // Create the restart text
+    this.restartText = this.add
+      .text(
+        this.screenCenter[0],
+        this.screenCenter[1] + 100,
+        "Click to restart",
+        {
+          fontSize: "24px",
+          fill: "#fff",
+        }
+      )
+      .setOrigin(0.5)
+      .setInteractive();
+
+    // Hide the restart text initially
+    this.restartText.visible = false;
   }
 
   update() {
     this.checkGameStatus();
     this.recyclePipes();
+
+     this.checkGameStatus();
   }
 
   listenToEvents() {
@@ -245,18 +266,18 @@ class PlayScene extends BaseScene {
   }
 
   gameOver() {
-    this.physics.pause();
-    this.bird.setTint(0xee4824);
+     this.physics.pause();
+     this.bird.setTint(0xee4824);
 
-    this.saveBestScore();
+     this.saveBestScore();
 
-    this.time.addEvent({
-      delay: 1000,
-      callback: () => {
-        this.scene.restart();
-      },
-      loop: false,
-    });
+     // Show the restart text
+     this.restartText.visible = true;
+
+     // Listen for click on the restart text
+     this.restartText.once("pointerdown", () => {
+       this.scene.restart();
+     });
   }
 
   flap() {
