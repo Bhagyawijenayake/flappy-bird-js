@@ -4,8 +4,7 @@ const PIPES_TO_RENDER = 4;
 
 class PlayScene extends BaseScene {
   constructor(config) {
-    super("PlayScene",config);
-    
+    super("PlayScene", config);
 
     this.bird = null;
     this.pipes = null;
@@ -22,8 +21,6 @@ class PlayScene extends BaseScene {
     this.bestScoreText = "";
   }
 
- 
-
   create() {
     super.create();
     this.createBird();
@@ -32,12 +29,32 @@ class PlayScene extends BaseScene {
     this.createScore();
     this.createPause();
     this.handleInput();
+    this.listenToEvents();
   }
 
   update() {
     this.checkGameStatus();
 
     this.recyclePipes();
+  }
+
+  listenToEvents() {
+    this.events.on("resume", () => {
+      this.initialTime = 3;
+      this.countDownText = this.add
+        .text(
+          ...this.screenCenter,
+          "Fly in: " + this.initialTime,
+          this.fontOptions
+        )
+        .setOrigin(0.5);
+      this.timedEvent = this.time.addEvent({
+        delay: 1000,
+        callback: () => console.log(this.initialTime--),
+        callbackScope: this,
+        loop: true,
+      });
+    });
   }
 
   createBG() {
@@ -95,19 +112,17 @@ class PlayScene extends BaseScene {
   }
 
   createPause() {
-   const pauseButton = this.add
+    const pauseButton = this.add
       .image(this.config.width - 10, this.config.height - 10, "pause")
       .setInteractive()
       .setScale(3)
       .setOrigin(1, 1);
 
- 
-
-    pauseButton.on("pointerdown",()=>{
-     this.physics.pause();
-     this.scene.pause();
-     this.scene.launch("PauseScene");
-    })
+    pauseButton.on("pointerdown", () => {
+      this.physics.pause();
+      this.scene.pause();
+      this.scene.launch("PauseScene");
+    });
   }
 
   handleInput() {
