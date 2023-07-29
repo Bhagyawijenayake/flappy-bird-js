@@ -18,6 +18,8 @@ class PlayScene extends Phaser.Scene {
 
     this.score = 0;
     this.scoreText = "";
+    this.bestScore = 0;
+    this.bestScoreText = "";
   }
 
   preload() {
@@ -77,13 +79,23 @@ class PlayScene extends Phaser.Scene {
   }
 
   createScore() {
-    this.score= 0;
+    this.score = 0;
+    const bestScore = localStorage.getItem("bestScore");
     this.scoreText = this.add.text(16, 16, `Score: ${0}`, {
       fontSize: "32px",
       fill: "#000",
     });
-  }
 
+    this.bestScoreText = this.add.text(
+      16,
+      52,
+      `Best score: ${bestScore || 0}`,
+      {
+        fontSize: "32px",
+        fill: "#000",
+      }
+    );
+  }
 
   handleInput() {
     this.input.on("pointerdown", this.flap, this, this);
@@ -94,7 +106,7 @@ class PlayScene extends Phaser.Scene {
   checkGameStatus() {
     if (
       this.bird.getBounds().bottom >= this.config.height ||
-      this.bird.y <= 0 
+      this.bird.y <= 0
     ) {
       this.gameOver();
     }
@@ -128,6 +140,7 @@ class PlayScene extends Phaser.Scene {
         if (tempPipes.length === 2) {
           this.placePipe(...tempPipes);
           this.increaseScore();
+          this.saveBestScore();
         }
       }
     });
@@ -143,19 +156,27 @@ class PlayScene extends Phaser.Scene {
     return rightMostX;
   }
 
-  gameOver() {
-  
+  saveBestScore() {
+    const bestScoreText = localStorage.getItem("bestScore");
+    const bestScore = bestScoreText && parseInt(bestScoreText, 10);
 
+    if (!bestScore || this.score > bestScore) {
+      localStorage.setItem("bestScore", this.score);
+    }
+  }
+
+  gameOver() {
     this.physics.pause();
-    this.bird.setTint(0xEE4824);
+    this.bird.setTint(0xee4824);
+
+    this.saveBestScore();
 
     this.time.addEvent({
       delay: 1000,
       callback: () => {
         this.scene.restart();
-      } ,
+      },
       loop: false,
-
     });
   }
 
