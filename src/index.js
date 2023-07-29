@@ -13,8 +13,11 @@ const SHARED_CONFIG = {
   startPosition: BIRD_POSITION,
 };
 
-const config = {
+const Scenes = [PreloadScene, MenuScene, PlayScene];
+const createScene = (Scene) => new Scene(SHARED_CONFIG);
+const initScenes = () => Scenes.map(createScene);
 
+const config = {
   type: Phaser.AUTO,
   ...SHARED_CONFIG,
   physics: {
@@ -23,11 +26,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [PreloadScene,new MenuScene(SHARED_CONFIG), new PlayScene(SHARED_CONFIG)],
+  scene: initScenes(),
 };
-
-
-
-
 
 new Phaser.Game(config);
