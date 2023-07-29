@@ -11,13 +11,10 @@ class PlayScene extends BaseScene {
     this.isPaused = false;
 
     this.pipeHorizontalDistance = 0;
-
     this.flapVelocity = 300;
 
     this.score = 0;
     this.scoreText = "";
-    this.bestScore = 0;
-    this.bestScoreText = "";
 
     this.currentDifficulty = "easy";
     this.difficulties = {
@@ -44,26 +41,25 @@ class PlayScene extends BaseScene {
     this.createColliders();
     this.createScore();
     this.createPause();
-    this.handleInput();
+    this.handleInputs();
     this.listenToEvents();
 
-     this.anims.create({
-       key: "fly",
-       frames: this.anims.generateFrameNumbers("bird", { start: 8, end: 15 }),
-       // 24 fps default, it will play animation consisting of 24 frames in 1 second
-       // in case of framerate 2 and sprite of 8 frames animations will play in
-       // 4 sec; 8 / 2 = 4
-       frameRate: 8,
-       // repeat infinitely
-       repeat: -1,
-     });
+    this.anims.create({
+      key: "fly",
+      frames: this.anims.generateFrameNumbers("bird", { start: 9, end: 15 }),
+      // 24 fps default, it will play animation consisting of 24 frames in 1 second
+      // in case of framerate 2 and sprite of 8 frames animations will play in
+      // 4 sec; 8 / 2 = 4
+      frameRate: 8,
+      // repeat infinitely
+      repeat: -1,
+    });
 
-     this.bird.play("fly");
+    this.bird.play("fly");
   }
 
   update() {
     this.checkGameStatus();
-
     this.recyclePipes();
   }
 
@@ -83,7 +79,7 @@ class PlayScene extends BaseScene {
         .setOrigin(0.5);
       this.timedEvent = this.time.addEvent({
         delay: 1000,
-        callback: () => this.countDown(),
+        callback: this.countDown,
         callbackScope: this,
         loop: true,
       });
@@ -102,18 +98,17 @@ class PlayScene extends BaseScene {
   }
 
   createBG() {
-    this.add.image(0, 0, "sky").setOrigin(0, 0);
+    this.add.image(0, 0, "sky").setOrigin(0);
   }
 
   createBird() {
     this.bird = this.physics.add
       .sprite(this.config.startPosition.x, this.config.startPosition.y, "bird")
-       .setScale(3)
-       .setFlipX(true)
+      .setFlipX(true)
+      .setScale(3)
       .setOrigin(0);
 
-      this.bird.setBodySize(this.bird.width, this.bird.height - 8);
-     
+    this.bird.setBodySize(this.bird.width, this.bird.height - 8);
     this.bird.body.gravity.y = 600;
     this.bird.setCollideWorldBounds(true);
   }
@@ -148,16 +143,10 @@ class PlayScene extends BaseScene {
       fontSize: "32px",
       fill: "#000",
     });
-
-    this.bestScoreText = this.add.text(
-      16,
-      52,
-      `Best score: ${bestScore || 0}`,
-      {
-        fontSize: "32px",
-        fill: "#000",
-      }
-    );
+    this.add.text(16, 52, `Best score: ${bestScore || 0}`, {
+      fontSize: "18px",
+      fill: "#000",
+    });
   }
 
   createPause() {
@@ -166,7 +155,7 @@ class PlayScene extends BaseScene {
       .image(this.config.width - 10, this.config.height - 10, "pause")
       .setInteractive()
       .setScale(3)
-      .setOrigin(1, 1);
+      .setOrigin(1);
 
     pauseButton.on("pointerdown", () => {
       this.isPaused = true;
@@ -176,10 +165,9 @@ class PlayScene extends BaseScene {
     });
   }
 
-  handleInput() {
-    this.input.on("pointerdown", this.flap, this, this);
-
-    this.input.keyboard.on("keydown-SPACE", this.flap);
+  handleInputs() {
+    this.input.on("pointerdown", this.flap, this);
+    this.input.keyboard.on("keydown_SPACE", this.flap, this);
   }
 
   checkGameStatus() {
@@ -193,8 +181,7 @@ class PlayScene extends BaseScene {
 
   placePipe(uPipe, lPipe) {
     const difficulty = this.difficulties[this.currentDifficulty];
-
-    const rightMostX = this.getRightmostPipe();
+    const rightMostX = this.getRightMostPipe();
     const pipeVerticalDistance = Phaser.Math.Between(
       ...difficulty.pipeVerticalDistanceRange
     );
@@ -229,22 +216,16 @@ class PlayScene extends BaseScene {
   }
 
   increaseDifficulty() {
-    if (this.score === 1) {
-      this.currentDifficulty = "easy";
-    }
-
-
-
     if (this.score === 3) {
       this.currentDifficulty = "normal";
     }
 
-    if (this.score === 8) {
+    if (this.score === 5) {
       this.currentDifficulty = "hard";
     }
   }
 
-  getRightmostPipe() {
+  getRightMostPipe() {
     let rightMostX = 0;
 
     this.pipes.getChildren().forEach(function (pipe) {
@@ -279,7 +260,9 @@ class PlayScene extends BaseScene {
   }
 
   flap() {
-    if (this.isPaused) return;
+    if (this.isPaused) {
+      return;
+    }
     this.bird.body.velocity.y = -this.flapVelocity;
   }
 
