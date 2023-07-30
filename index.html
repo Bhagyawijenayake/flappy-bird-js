@@ -2,20 +2,34 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       body {
-      margin: 0; /* Remove default margin to avoid unwanted spacing */
-        display: flex; /* Use flexbox to center the content */
-        justify-content: center; /* Horizontally center the content */
-        align-items: center; /* Vertically center the content */
-        height: 100vh; /* Make the body take up the full viewport height */
-        background-color: #e1c1c1; /* Optional: Set a background color */
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #e1c1c1;
+      }
 
-        
+      /* Styles for larger screens (e.g., tablets and desktops) */
+      @media only screen and (min-width: 768px) {
+        body {
+          font-size: 18px; /* Increase font size for larger screens */
+        }
+      }
+
+      /* Styles for smaller screens (e.g., mobile phones) */
+      @media only screen and (max-width: 767px) {
+        body {
+          font-size: 14px; /* Decrease font size for smaller screens */
+          padding: 10px; /* Add some padding to the body content for better readability */
+        }
       }
     </style>
   </head>
   <body>
-
+    
   </body>
 </html>
